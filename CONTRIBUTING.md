@@ -47,3 +47,11 @@ When creating the Ansible playbooks for study machines, you should aim to provid
 For example, if you are creating a study environment for `EX280-OCP3.9`, you would install the upstream version of `OCP3.9` (`Kubernetes`) with a minimal configuration because the given exam does not include an installation objective.
 
 On the other hand, if you are creating a study environment for `EX125-RHCS3`, there is an installation objective so you would provide the installation media but not perform the installation.
+
+## Pull Request Acceptance Guidelines
+
+All incoming pull requests will be reviewed to ensure the requirements laid out in this document are adhered to.
+
+All incoming pull requests will also be briefly tested to ensure they launch and seem to execute without errors.
+
+Any pull request that does not meet the above will not be merged. Instead, feedback will be provided so you can correct any issues and try again.
