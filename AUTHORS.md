@@ -1,3 +1,3 @@
 # Authors
 
-* Jerry Smith \<[jdsmith1012@me.com](jdsmith1012@me.com)\>
+* Jerry Smith \<[jdsmith1012@me.com](mailto:jdsmith1012@me.com)\>
