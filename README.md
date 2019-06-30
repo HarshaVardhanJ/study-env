@@ -10,8 +10,8 @@ This repository does **not** provide sample questions, lab scripts, or automated
 
 ## Contributing
 
-Please read the CONTRIBUTING.md file for important information before contributing to the repository.
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for important information before contributing to the repository.
 
 ## Authors
 
-Everyone who has contributed to this repository has been included in the AUTHORS.md file.
+Everyone who has contributed to this repository has been included in the [AUTHORS.md](AUTHORS.md) file.
