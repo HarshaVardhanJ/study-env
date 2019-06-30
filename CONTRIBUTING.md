@@ -42,6 +42,10 @@ All study machines should provide a `student` user that the student will use to 
 
 Users will initially connect to one of the study machines using password then SSH to other machines using the locally established SSH key.
 
+An motd file should be provided on every machine asking the user to read the contents of a README file located in the `student` home directory of every machine. This README file should include details for any services provided by the `services` machine such as available NFS/CIFS mounts, LDAP details and usernames/passwords, etc...
+
+You should always aim to use upstream software versions that are equivilant to the Red Hat software version being tested on. For example, `Kubernetes` instead of `OpenShift`.
+
 When creating the Ansible playbooks for study machines, you should aim to provide a minimal environment for study. Please check the exam objectives when deciding what minimal means.
 
 For example, if you are creating a study environment for `EX280-OCP3.9`, you would install the upstream version of `OCP3.9` (`Kubernetes`) with a minimal configuration because the given exam does not include an installation objective.
