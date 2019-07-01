@@ -11,7 +11,7 @@ Exam objectives can be reviewed publicly on [the Red Hat website](https://www.re
 ## Hardware Requirements
 
 * Virtualization capability on CPU
-* libvirt (KVM) + vagrant-libvirt plugin or VirtualBox preinstalled
+* libvirt (KVM) + vagrant-libvirt plugin preinstalled
 * 8 GB of RAM
 * Up to 55 GB disk space
 

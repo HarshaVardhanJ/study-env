@@ -9,11 +9,6 @@ Vagrant.configure("2") do |config|
   config.vm.define "services" do |domain|
     domain.vm.network :private_network, :ip => '172.25.250.10'
 
-    domain.vm.provider "virtualbox" do |v|
-      v.name = 'services'
-      v.customize ["modifyvm", :id, "--memory", "1024"]
-    end
-
     domain.vm.provider "libvirt" do |v|
       v.disk_bus = 'sata'
       v.memory = 1024
@@ -44,18 +39,6 @@ Vagrant.configure("2") do |config|
   # Server1 box configuration
   config.vm.define "server1" do |domain|
     domain.vm.network :private_network, :ip => '172.25.250.11'
-
-    domain.vm.provider "virtualbox" do |v|
-      v.name = 'server1'
-      v.customize ["modifyvm", :id, "--memory", "1024"]
-
-      # Add a secondary drive (5 GB)
-      file_to_disk = "vdb.vmdk"
-      unless File.exist?(file_to_disk)
-        v.customize [ "createmedium", "disk", "--filename", "vdb.vmdk", "--format", "vmdk", "--size", 1024 * 5 ]
-      end
-      v.customize [ "storageattach", "server1" , "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", file_to_disk]
-    end
 
     domain.vm.provider "libvirt" do |v|
       v.disk_bus = 'sata'
@@ -90,18 +73,6 @@ Vagrant.configure("2") do |config|
   # Server2 box configuration
   config.vm.define "server2" do |domain|
     domain.vm.network :private_network, :ip => '172.25.250.12'
-
-    domain.vm.provider "virtualbox" do |v|
-      v.name = 'server2'
-      v.customize ["modifyvm", :id, "--memory", "1024"]
-
-      # Add a secondary drive (5 GB)
-      file_to_disk = "vdb.vmdk"
-      unless File.exist?(file_to_disk)
-        v.customize [ "createmedium", "disk", "--filename", "vdb.vmdk", "--format", "vmdk", "--size", 1024 * 5 ]
-      end
-      v.customize [ "storageattach", "server2" , "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", file_to_disk]
-    end
 
     domain.vm.provider "libvirt" do |v|
       v.disk_bus = 'sata'
