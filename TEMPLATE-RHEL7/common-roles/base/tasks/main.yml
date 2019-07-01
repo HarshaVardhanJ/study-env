@@ -1,0 +1,109 @@
+---
+  - name: Set hostname
+    hostname:
+      name: "{{ hostname }}"
+      
+  - name: Setup student user
+    user:
+      name: student
+      comment: Student User
+      groups: wheel
+      password: $6$tv.QEDzY1zj0zomx$atjJtgIJDjw6r58Jx4H9K9Dq0q8witEurtKTyRZ2kPglm.TVR09AtyMvmh8Wm3mkJUznpU4ZQlS3tF.ekQTp3.
+
+  - name: Ensure .ssh directory exists
+    file:
+      path: /home/student/.ssh
+      owner: student
+      group: student
+      mode: 0700
+      state: directory
+
+  - name: Install private key
+    copy:
+      src: keys/id_rsa
+      dest: /home/student/.ssh/id_rsa
+      owner: student
+      group: student
+      mode: 0600
+
+  - name: Install public key
+    copy:
+      src: keys/id_rsa.pub
+      dest: /home/student/.ssh/authorized_keys
+      owner: student
+      group: student
+      mode: 0600
+
+  - name: Ensure SELinux is enforcing
+    selinux:
+      policy: targeted
+      state: enforcing
+
+  - name: Ensure FirewallD is started and enabled
+    service:
+      name: firewalld
+      enabled: yes
+      state: started
+
+  - name: Ensure FirewallD allows needed incoming services
+    firewalld:
+      zone: public
+      service: "{{ item }}"
+      permanent: yes
+      immediate: yes
+      state: enabled
+    loop: "{{ firewall_services }}"
+
+  - name: Configure NetworkManager to not manage resolv.conf
+    ini_file:
+      path: /etc/NetworkManager/NetworkManager.conf
+      section: main
+      option: dns
+      value: none
+    notify: Restart NetworkManager
+
+  - name: Install resolv.conf
+    copy:
+      src: resolv.conf
+      dest: /etc/resolv.conf
+
+  - name: Remove all unneeded yum repository files
+    changed_when: false
+    shell: find /etc/yum.repos.d -type f | grep -i 'centos.*.repo' | xargs rm -f
+    args:
+      warn: false
+
+  - name: Install yum repository file
+    copy:
+      src: localdvd.repo
+      dest: /etc/yum.repos.d/localdvd.repo
+    notify: Clean yum cache
+
+  - name: Clean yum cache
+    changed_when: false
+    command: yum clean all
+    args:
+      warn: false
+
+  - name: Install chrony
+    yum:
+      name: chrony
+      state: latest
+
+  - name: Install chrony configuration
+    copy:
+      src: chrony.conf
+      dest: /etc/chrony.conf
+    notify: Restart Chronyd
+
+  - name: Start and enable Chronyd
+    service:
+      name: chronyd
+      enabled: yes
+      state: started
+
+  - name: Setup MOTD
+    copy:
+      src: motd
+      dest: /etc/motd
+

@@ -1,15 +1,52 @@
 Vagrant.configure("2") do |config|
 
   # All boxes use these settings
-  config.vm.box = "centos/7"
-  config.vm.box_version = "1505.01"
+  config.vm.box = "dean1012/centos-7.0"
+  config.vm.box_version = "1.0"
+  config.vm.synced_folder ".", "/home/vagrant/sync", type: "rsync", rsync__exclude: ".git/"
 
   # Services box configuration
-  config.vm.define "services" do |services|
-    services.vm.network :private_network, :ip => '172.25.250.10'
+  config.vm.define "services" do |domain|
+    domain.vm.network :private_network, :ip => '172.25.250.10'
 
-    config.vm.provider "virtualbox" do |v|
+    domain.vm.provider "virtualbox" do |v|
       v.name = 'services'
+      v.customize ["modifyvm", :id, "--memory", "1024"]
+    end
+
+    domain.vm.provider "libvirt" do |v|
+      v.disk_bus = 'sata'
+      v.memory = 1024
+    end
+
+    # Disable DHCP
+    domain.vm.provision :shell,
+    inline: 'nmcli connection modify "System eth1" ipv4.method manual && nmcli connection up "System eth1"; true'
+
+    # Install latest Ansible
+    domain.vm.provision "shell",
+    inline: "yum -y install python && yum -y update curl && curl https://bootstrap.pypa.io/get-pip.py | python && pip install ansible"
+    
+    # Run machine specific pre-configuration script, if any
+    domain.vm.provision "shell", path: "services/setup.sh"
+
+    # Disable internet access
+    domain.vm.provision "shell",
+    inline: "ip route del 0/0",
+    run: "always"
+    
+    # Kick off Ansible
+    domain.vm.provision "shell",
+    inline: "cd ~vagrant/sync/services && ansible-playbook site.yml",
+    run: "always"
+  end
+
+  # Server1 box configuration
+  config.vm.define "server1" do |domain|
+    domain.vm.network :private_network, :ip => '172.25.250.11'
+
+    domain.vm.provider "virtualbox" do |v|
+      v.name = 'server1'
       v.customize ["modifyvm", :id, "--memory", "1024"]
 
       # Add a secondary drive (5 GB)
@@ -17,29 +54,84 @@ Vagrant.configure("2") do |config|
       unless File.exist?(file_to_disk)
         v.customize [ "createmedium", "disk", "--filename", "vdb.vmdk", "--format", "vmdk", "--size", 1024 * 5 ]
       end
-      v.customize [ "storageattach", "services" , "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", file_to_disk]
+      v.customize [ "storageattach", "server1" , "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", file_to_disk]
     end
 
-    config.vm.provider "libvirt" do |v|
+    domain.vm.provider "libvirt" do |v|
+      v.disk_bus = 'sata'
       v.memory = 1024
       
       # Add a secondary drive (5 GB)
-      v.storage :file, :size => '5G'
+      v.storage :file, :size => '5G', :bus => 'sata'
     end
 
-    # Install latest Ansible
-    config.vm.provision "shell",
-    inline: "yum -y install python wget && yum -y update curl && curl https://bootstrap.pypa.io/get-pip.py | python && pip install ansible"
-    
-    # Run machine specific pre-configuration script, if any
-    config.vm.provision "shell", path: "services/setup.sh"
+    # Disable DHCP
+    domain.vm.provision :shell,
+    inline: 'nmcli connection modify "System eth1" ipv4.method manual && nmcli connection up "System eth1"; true'
 
-    # Disable internet access then kick off Ansible
-    config.vm.provision "shell",
-    inline: "ip route del 0/0 && cd ~vagrant/sync/services && ansible-playbook site.yml"
+    # Install latest Ansible
+    domain.vm.provision "shell",
+    inline: "yum -y install python && yum -y update curl && curl https://bootstrap.pypa.io/get-pip.py | python && pip install ansible"
+
+    # Disable internet access
+    domain.vm.provision "shell",
+    inline: "ip route del 0/0",
+    run: "always"
+    
+    # Kick off Ansible
+    domain.vm.provision "shell",
+    inline: "cd ~vagrant/sync/server1 && ansible-playbook site.yml",
+    run: "always"
+
+    # Output instructions to the learner
+    domain.vm.post_up_message = "To access server1, please ssh to '172.25.250.11' with username 'student' and password 'student'."
   end
 
-  # Output instructions to the learner
-  config.vm.post_up_message = "Please ssh to '172.25.250.11' with username 'student' and password 'student'."
+  # Server2 box configuration
+  config.vm.define "server2" do |domain|
+    domain.vm.network :private_network, :ip => '172.25.250.12'
+
+    domain.vm.provider "virtualbox" do |v|
+      v.name = 'server2'
+      v.customize ["modifyvm", :id, "--memory", "1024"]
+
+      # Add a secondary drive (5 GB)
+      file_to_disk = "vdb.vmdk"
+      unless File.exist?(file_to_disk)
+        v.customize [ "createmedium", "disk", "--filename", "vdb.vmdk", "--format", "vmdk", "--size", 1024 * 5 ]
+      end
+      v.customize [ "storageattach", "server2" , "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", file_to_disk]
+    end
+
+    domain.vm.provider "libvirt" do |v|
+      v.disk_bus = 'sata'
+      v.memory = 1024
+      
+      # Add a secondary drive (5 GB)
+      v.storage :file, :size => '5G', :bus => 'sata'
+    end
+
+    # Disable DHCP
+    domain.vm.provision :shell,
+    inline: 'nmcli connection modify "System eth1" ipv4.method manual && nmcli connection up "System eth1"; true'
+
+    # Install latest Ansible
+    domain.vm.provision "shell",
+    inline: "yum -y install python && yum -y update curl && curl https://bootstrap.pypa.io/get-pip.py | python && pip install ansible"
+
+    # Disable internet access
+    domain.vm.provision "shell",
+    inline: "ip route del 0/0",
+    run: "always"
+    
+    # Kick off Ansible
+    domain.vm.provision "shell",
+    inline: "cd ~vagrant/sync/server2 && ansible-playbook site.yml",
+    run: "always"
+
+    # Output instructions to the learner
+    domain.vm.post_up_message = "To access server2, please ssh to '172.25.250.12' with username 'student' and password 'student'."
+  end
 
 end
+

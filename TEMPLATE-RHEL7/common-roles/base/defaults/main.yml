@@ -1,0 +1,5 @@
+---
+hostname: unnamed.example.com
+firewall_services:
+  - ssh
+  
