@@ -1,5 +1,13 @@
 ---
 hostname: unnamed.example.com
+
+required_packages:
+  - vim
+  - chrony
+  - bash-completion
+
 firewall_services:
   - ssh
+
+is_services: false
   

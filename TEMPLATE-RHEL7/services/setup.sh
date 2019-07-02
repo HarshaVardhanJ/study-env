@@ -40,3 +40,11 @@ cat << EOF > /etc/hosts.example.com
 172.25.250.12 server2.example.com
 EOF
 
+# Start and enable httpd
+systemctl enable httpd;
+systemctl start httpd;
+
+# Start and enable dnsmasq
+systemctl enable dnsmasq;
+systemctl start dnsmasq;
+

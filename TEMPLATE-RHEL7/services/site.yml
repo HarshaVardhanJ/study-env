@@ -1,6 +1,7 @@
 ---
 - hosts: localhost
   vars:
+    is_services: true
     hostname: services.example.com
     firewall_services:
       - ssh
@@ -21,4 +22,12 @@
       name: dnsmasq
       enabled: yes
       state: started
+
+  # this task should always run last
+  - name: Mark provisioning as complete
+    copy:
+      content: complete
+      dest: /var/www/html/complete.txt
+      mode: 0644
+      setype: httpd_sys_content_t
 

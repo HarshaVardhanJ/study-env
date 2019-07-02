@@ -14,9 +14,9 @@ Vagrant.configure("2") do |config|
       v.memory = 1024
     end
 
-    # Disable DHCP
-    domain.vm.provision :shell,
-    inline: 'nmcli connection modify "System eth1" ipv4.method manual && nmcli connection up "System eth1"; true'
+    domain.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+    end
 
     # Install latest Ansible
     domain.vm.provision "shell",
@@ -37,7 +37,7 @@ Vagrant.configure("2") do |config|
   end
 
   # Server1 box configuration
-  config.vm.define "server1" do |domain|
+  config.vm.define "server1", primary: true do |domain|
     domain.vm.network :private_network, :ip => '172.25.250.11'
 
     domain.vm.provider "libvirt" do |v|
@@ -48,9 +48,17 @@ Vagrant.configure("2") do |config|
       v.storage :file, :size => '5G', :bus => 'sata'
     end
 
-    # Disable DHCP
-    domain.vm.provision :shell,
-    inline: 'nmcli connection modify "System eth1" ipv4.method manual && nmcli connection up "System eth1"; true'
+    domain.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+
+      # Create a secondary drive (5 GB) if it doesn't yet exist
+      unless File.exist?("./server1-sdb.vmdk")
+        v.customize ['createhd', '--filename', "./server1-sdb.vmdk", '--size', 5 * 1024]
+      end
+
+      # Attach the secondary drive to the server
+      v.customize ['storageattach', :id,  '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdb.vmdk"]
+    end
 
     # Install latest Ansible
     domain.vm.provision "shell",
@@ -82,9 +90,17 @@ Vagrant.configure("2") do |config|
       v.storage :file, :size => '5G', :bus => 'sata'
     end
 
-    # Disable DHCP
-    domain.vm.provision :shell,
-    inline: 'nmcli connection modify "System eth1" ipv4.method manual && nmcli connection up "System eth1"; true'
+    domain.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+
+      # Create a secondary drive (5 GB) if it doesn't yet exist
+      unless File.exist?("./server1-sdb.vmdk")
+        v.customize ['createhd', '--filename', "./server1-sdb.vmdk", '--size', 5 * 1024]
+      end
+
+      # Attach the secondary drive to the server
+      v.customize ['storageattach', :id,  '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdb.vmdk"]
+    end
 
     # Install latest Ansible
     domain.vm.provision "shell",
