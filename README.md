@@ -15,3 +15,7 @@ Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for important informatio
 ## Authors
 
 Everyone who has contributed to this repository has been included in the [AUTHORS.md](AUTHORS.md) file.
+
+## Help
+
+Please join us [on Discord](https://discord.gg/bJWRw5e) for assistance with any of these study environments or to request a new one.

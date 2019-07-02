@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  vars:
+    hostname: server1.example.com
+    firewall_services:
+      - ssh
+  roles:
+    - base
+
