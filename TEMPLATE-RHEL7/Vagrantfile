@@ -52,12 +52,12 @@ Vagrant.configure("2") do |config|
       v.memory = 1024
 
       # Create a secondary drive (5 GB) if it doesn't yet exist
-      unless File.exist?("./server1-sdb.vmdk")
-        v.customize ['createhd', '--filename', "./server1-sdb.vmdk", '--size', 5 * 1024]
+      unless File.exist?("./server1-sdb.vdi")
+        v.customize ['createhd', '--filename', "./server1-sdb.vdi", '--size', 5 * 1024]
       end
 
       # Attach the secondary drive to the server
-      v.customize ['storageattach', :id,  '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdb.vmdk"]
+      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdb.vdi"]
     end
 
     # Install latest Ansible
@@ -94,12 +94,12 @@ Vagrant.configure("2") do |config|
       v.memory = 1024
 
       # Create a secondary drive (5 GB) if it doesn't yet exist
-      unless File.exist?("./server1-sdb.vmdk")
-        v.customize ['createhd', '--filename', "./server1-sdb.vmdk", '--size', 5 * 1024]
+      unless File.exist?("./server2-sdb.vdi")
+        v.customize ['createhd', '--filename', "./server2-sdb.vdi", '--size', 5 * 1024]
       end
 
       # Attach the secondary drive to the server
-      v.customize ['storageattach', :id,  '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdb.vmdk"]
+      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server2-sdb.vdi"]
     end
 
     # Install latest Ansible

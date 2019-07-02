@@ -11,7 +11,7 @@ Exam objectives can be reviewed publicly on [the Red Hat website](https://www.re
 ## Hardware Requirements
 
 * Virtualization capability on CPU
-* libvirt (KVM) + vagrant-libvirt plugin preinstalled
+* libvirt (KVM) + vagrant-libvirt plugin or VirtualBox preinstalled
 * 8 GB of RAM
 * Up to 55 GB disk space
 
@@ -22,7 +22,7 @@ Several machines are provided to assist you in studying:
 * `services` - This machine provides services you may need to study but should not need to setup on your own. Typically, you should not have to connect to this machine.
 * `server1` & `server2` - These machines are base installs you can use to study with.
 
-Please note if you are using the libvirt provider, a management network will be created as `eth0`. This network can be ignored in favor of `eth1`.
+Please note there may be a management network created on each machine by Vagrant. You may use DNS or the `172.25.250.0/24` network to interact with the study environment.
 
 ## Usage
 
