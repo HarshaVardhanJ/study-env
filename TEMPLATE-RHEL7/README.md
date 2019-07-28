@@ -12,8 +12,8 @@ Exam objectives can be reviewed publicly on [the Red Hat website](https://www.re
 
 * Virtualization capability on CPU
 * libvirt (KVM) + vagrant-libvirt plugin or VirtualBox preinstalled
+* SSH client (openssh on Linux/Mac, putty on Windows preferred)
 * 8 GB of RAM
-* Up to 55 GB disk space
 
 ## Environment Overview
 
