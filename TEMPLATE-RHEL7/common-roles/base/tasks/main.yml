@@ -112,11 +112,3 @@
     template:
       src: motd.j2
       dest: /etc/motd
-
-  - name: Disable default route
-    shell: |
-      nmcli connection modify "eth0" ipv4.never-default yes;
-      nmcli connection up "eth0";
-    args:
-      warn: no
-    changed_when: false
