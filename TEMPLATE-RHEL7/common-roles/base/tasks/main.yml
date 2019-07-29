@@ -1,0 +1,122 @@
+---
+  # This block should execute first
+  - name: Wait for services machine to finish setting up
+    block:
+      - debug:
+          msg: Setup will continue after the services machine is fully set up... please wait...
+
+      - shell: RC=1; while [ $RC -ne 0 ]; do curl http://172.25.250.10/complete.txt >/dev/null 2>/dev/null; RC=$?; done;
+        changed_when: false
+    when: not is_services
+
+  - name: Set hostname
+    hostname:
+      name: "{{ hostname }}"
+      
+  - name: Setup student user
+    user:
+      name: student
+      comment: Student User
+      groups: wheel
+      password: $6$tv.QEDzY1zj0zomx$atjJtgIJDjw6r58Jx4H9K9Dq0q8witEurtKTyRZ2kPglm.TVR09AtyMvmh8Wm3mkJUznpU4ZQlS3tF.ekQTp3.
+
+  - name: Ensure .ssh directory exists
+    file:
+      path: /home/student/.ssh
+      owner: student
+      group: student
+      mode: 0700
+      state: directory
+
+  - name: Install private key
+    copy:
+      src: keys/id_rsa
+      dest: /home/student/.ssh/id_rsa
+      owner: student
+      group: student
+      mode: 0600
+
+  - name: Install public key
+    copy:
+      src: keys/id_rsa.pub
+      dest: /home/student/.ssh/authorized_keys
+      owner: student
+      group: student
+      mode: 0600
+
+  - name: Ensure SELinux is enforcing
+    selinux:
+      policy: targeted
+      state: enforcing
+
+  - name: Ensure FirewallD is started and enabled
+    service:
+      name: firewalld
+      enabled: yes
+      state: started
+
+  - name: Ensure FirewallD allows needed incoming services
+    firewalld:
+      zone: public
+      service: "{{ item }}"
+      permanent: yes
+      immediate: yes
+      state: enabled
+    loop: "{{ firewall_services }}"
+
+  - name: Configure NetworkManager to not manage resolv.conf
+    ini_file:
+      path: /etc/NetworkManager/NetworkManager.conf
+      section: main
+      option: dns
+      value: none
+    notify: Restart NetworkManager
+    register: networkmanagerchanged
+
+  - name: Restart NetworkManager
+    service:
+      name: NetworkManager
+      state: restarted
+    when: networkmanagerchanged.changed
+
+  - name: Install resolv.conf
+    copy:
+      src: resolv.conf
+      dest: /etc/resolv.conf
+
+  - name: Install yum repository file
+    copy:
+      src: localdvd.repo
+      dest: /etc/yum.repos.d/localdvd.repo
+    notify: Clean yum cache
+
+  - name: Install required packages
+    yum:
+      name: "{{ item }}"
+      state: latest
+    loop: "{{ required_packages }}"
+
+  - name: Install chrony configuration
+    copy:
+      src: chrony.conf
+      dest: /etc/chrony.conf
+    notify: Restart Chronyd
+
+  - name: Start and enable Chronyd
+    service:
+      name: chronyd
+      enabled: yes
+      state: started
+
+  - name: Setup MOTD
+    template:
+      src: motd.j2
+      dest: /etc/motd
+
+  - name: Disable default route
+    shell: |
+      nmcli connection modify "eth0" ipv4.never-default yes;
+      nmcli connection up "eth0";
+    args:
+      warn: no
+    changed_when: false

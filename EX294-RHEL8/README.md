@@ -2,11 +2,13 @@
 
 ## Description
 
-This is a template file meant to make it easier to create new study environments. It should not be used by end users.
+This provides a minimal study environment for the EX294 (RHCE) exam based on RHEL8.
+
+Please see Environment Overview and Environment Details below for more information.
 
 ## Exam Objectives
 
-Exam objectives can be reviewed publicly on [the Red Hat website](https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam)
+Exam objectives can be reviewed publicly on [the Red Hat website](https://www.redhat.com/en/services/training/ex294-red-hat-certified-engineer-rhce-exam-red-hat-enterprise-linux-8)
 
 ## Hardware Requirements
 
@@ -26,7 +28,9 @@ Please note there may be a management network created on each machine by Vagrant
 
 ## Environment Details
 
-Details about the environment should go here. For example, exported NFS shares, ldap logins, etc...
+Ansible is preinstalled on all servers and can be used for practice. 
+
+`server1` & `server2` provide a secondary 5 GB pristine hard drive that may be used as desired.
 
 ## Usage
 
