@@ -111,6 +111,11 @@
       enabled: yes
       state: started
 
+  - name: Install NFS client
+    dnf:
+      name: nfs-utils
+      state: latest
+
   - name: Setup MOTD
     template:
       src: motd.j2
