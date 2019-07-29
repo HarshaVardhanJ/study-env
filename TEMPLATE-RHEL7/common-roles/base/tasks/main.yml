@@ -71,29 +71,24 @@
       option: dns
       value: none
     notify: Restart NetworkManager
+    register: networkmanagerchanged
+
+  - name: Restart NetworkManager
+    service:
+      name: NetworkManager
+      state: restarted
+    when: networkmanagerchanged.changed
 
   - name: Install resolv.conf
     copy:
       src: resolv.conf
       dest: /etc/resolv.conf
 
-  - name: Remove all unneeded yum repository files
-    changed_when: false
-    shell: find /etc/yum.repos.d -type f | grep -i 'centos.*.repo' | xargs rm -f
-    args:
-      warn: false
-
   - name: Install yum repository file
     copy:
       src: localdvd.repo
       dest: /etc/yum.repos.d/localdvd.repo
     notify: Clean yum cache
-
-  - name: Clean yum cache
-    changed_when: false
-    command: yum clean all
-    args:
-      warn: false
 
   - name: Install required packages
     yum:
@@ -114,7 +109,14 @@
       state: started
 
   - name: Setup MOTD
-    copy:
-      src: motd
+    template:
+      src: motd.j2
       dest: /etc/motd
 
+  - name: Disable default route
+    shell: |
+      nmcli connection modify "eth0" ipv4.never-default yes;
+      nmcli connection up "eth0";
+    args:
+      warn: no
+    changed_when: false

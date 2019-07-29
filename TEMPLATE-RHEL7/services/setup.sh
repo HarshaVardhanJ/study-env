@@ -1,18 +1,7 @@
 #!/bin/bash
 
-# Install pre-requisites
-yum -y install wget createrepo;
-
-# Download CentOS 7.0 ISO
-cd /tmp;
-echo "Please wait for download of the CentOS 7.0 ISO to complete...";
-wget http://archive.kernel.org/centos-vault/7.0.1406/isos/x86_64/CentOS-7.0-1406-x86_64-Everything.iso -nv;
-
-# Mount CentOS 7.0 ISO temporarily
-mount -o loop /tmp/CentOS-7.0-1406-x86_64-Everything.iso /mnt;
-
-# Install Apache
-yum -y install httpd;
+# Mount ISO temporarily
+mount -o loop ~vagrant/sync/iso/rhel-server-7.0-x86_64-dvd.iso /mnt;
 
 # Create local repository
 rm -rf /var/www/html/*;
@@ -22,10 +11,6 @@ restorecon -Rv /var/www/html;
 
 # Cleanup
 umount /mnt;
-rm -rf /tmp/CentOS-7.0-1406-x86_64-Everything.iso;
-
-# Install dnsmasq
-yum -y install dnsmasq bind-utils;
 
 # Bootstrap dnsmasq config
 cat << EOF > /etc/dnsmasq.d/localdns.conf
@@ -47,4 +32,3 @@ systemctl start httpd;
 # Start and enable dnsmasq
 systemctl enable dnsmasq;
 systemctl start dnsmasq;
-

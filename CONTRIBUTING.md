@@ -4,7 +4,7 @@
 
 * All commits should be [signed](https://help.github.com/en/articles/managing-commit-signature-verification)
 * Every file should end with a blank new line. No exceptions
-* Binary files should not be stored in the repository. If these are needed, write an initialization script in the Vagrantfile that downloads them
+* Binary files should not be stored in the repository. If these are needed, write an initialization script in the Vagrantfile that downloads them or provide instructions to the user in the README.md file associated with the study environment.
 * Each change should be created as a branch and submitted as a pull request
 * Add your name to the AUTHORS.md file as you would like to be credited. Your name should not appear more than once in the file and should not take up more than one line
 * Do not break the NDA for any exam

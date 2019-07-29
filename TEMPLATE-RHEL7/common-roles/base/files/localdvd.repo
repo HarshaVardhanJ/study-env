@@ -1,6 +1,5 @@
-[localdvd]
-name = localdvd
+[LocalDVD]
+name = LocalDVD
 gpgcheck = 0
 enabled = 1
-baseurl = http://services.example.com/
-
+baseurl = http://services.example.com
