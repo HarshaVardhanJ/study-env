@@ -39,11 +39,6 @@ Vagrant.configure("2") do |config|
     domain.vm.provider "virtualbox" do |v|
       v.memory = 1024
     end
-    
-    # Disable internet access
-    domain.vm.provision "shell",
-    inline: "ip route del 0/0",
-    run: "always"
 
     # Run machine specific pre-configuration script, if any
     domain.vm.provision "shell", path: "services/setup.sh"
@@ -51,6 +46,11 @@ Vagrant.configure("2") do |config|
     # Kick off Ansible
     domain.vm.provision "shell",
     inline: "cd ~vagrant/sync/services && ansible-playbook site.yml"
+
+    # Disable internet access
+    domain.vm.provision "shell",
+    inline: "ip route del 0/0",
+    run: "always"
   end
 
   # Server1 box configuration
@@ -80,14 +80,14 @@ Vagrant.configure("2") do |config|
       v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdb.vdi"]
     end
 
+    # Kick off Ansible
+    domain.vm.provision "shell",
+    inline: "cd ~vagrant/sync/server1 && ansible-playbook site.yml"
+
     # Disable internet access
     domain.vm.provision "shell",
     inline: "ip route del 0/0",
     run: "always"
-
-    # Kick off Ansible
-    domain.vm.provision "shell",
-    inline: "cd ~vagrant/sync/server1 && ansible-playbook site.yml"
 
     # Output instructions to the learner
     domain.vm.post_up_message = "To access server1, please ssh to '172.25.250.11' with username 'student' and password 'student'."
@@ -119,15 +119,15 @@ Vagrant.configure("2") do |config|
       # Attach the secondary drive to the server
       v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server2-sdb.vdi"]
     end
-    
-    # Disable internet access
-    domain.vm.provision "shell",
-    inline: "ip route del 0/0",
-    run: "always"
 
     # Kick off Ansible
     domain.vm.provision "shell",
     inline: "cd ~vagrant/sync/server2 && ansible-playbook site.yml"
+
+    # Disable internet access
+    domain.vm.provision "shell",
+    inline: "ip route del 0/0",
+    run: "always"
 
     # Output instructions to the learner
     domain.vm.post_up_message = "To access server2, please ssh to '172.25.250.12' with username 'student' and password 'student'."
