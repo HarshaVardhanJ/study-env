@@ -5,7 +5,7 @@ required_packages:
   - vim
   - chrony
   - bash-completion
-  - selinux-policy-devel
+  - selinux-policy-doc
   - libselinux-python
 
 firewall_services:
