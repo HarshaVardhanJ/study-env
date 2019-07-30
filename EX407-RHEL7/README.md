@@ -1,14 +1,14 @@
-# TEMPLATE-RHEL8
+# EX407-RHEL7
 
 ## Description
 
-This provides a minimal study environment for the EX294 (RHCE) exam based on RHEL8.
+This provides a minimal study environment for the EX407 exam based on RHEL7.
 
 Please see Environment Overview and Environment Details below for more information.
 
 ## Exam Objectives
 
-Exam objectives can be reviewed publicly on [the Red Hat website](https://www.redhat.com/en/services/training/ex294-red-hat-certified-engineer-rhce-exam-red-hat-enterprise-linux-8)
+Exam objectives can be reviewed publicly on [the Red Hat website](https://www.redhat.com/en/services/training/ex407-red-hat-certified-specialist-in-ansible-automation-exam)
 
 ## Hardware Requirements
 
@@ -28,13 +28,11 @@ Please note there may be a management network created on each machine by Vagrant
 
 ## Environment Details
 
-Ansible is preinstalled on all servers and can be used for practice. 
-
-`server1` & `server2` provide a secondary 5 GB pristine hard drive that may be used as desired.
+Ansible is preinstalled on `server` and `server2`.
 
 ## Usage
 
-Before launching the study environment, download the RHEL 8.0 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
+Before launching the study environment, download the RHEL 7.0 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
 
 To launch the study environment, use: `vagrant up --provider=PROV` where `PROV` is either `libvirt` or `virtualbox`
 

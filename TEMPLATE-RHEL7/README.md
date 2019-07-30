@@ -30,7 +30,7 @@ Details about the environment should go here. For example, exported NFS shares, 
 
 ## Usage
 
-Before launching the study environment, download the RHEL 7 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
+Before launching the study environment, download the RHEL 7.0 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
 
 To launch the study environment, use: `vagrant up --provider=PROV` where `PROV` is either `libvirt` or `virtualbox`
 

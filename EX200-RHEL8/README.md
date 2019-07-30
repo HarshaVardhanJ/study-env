@@ -37,7 +37,7 @@ The `services` machine exposes an NFS server with the following exports to the `
 
 ## Usage
 
-Before launching the study environment, download the RHEL 8 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
+Before launching the study environment, download the RHEL 8.0 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
 
 To launch the study environment, use: `vagrant up --provider=PROV` where `PROV` is either `libvirt` or `virtualbox`
 
