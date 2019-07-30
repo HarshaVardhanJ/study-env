@@ -28,9 +28,9 @@ Please note there may be a management network created on each machine by Vagrant
 
 ## Environment Details
 
-Ansible is preinstalled on all servers and can be used for practice. 
+Ansible is preinstalled on all servers and can be used for practice.
 
-`server1` & `server2` provide a secondary 5 GB pristine hard drive that may be used as desired.
+The `student` user has passwordless sudo access and ssh key access to all servers.
 
 ## Usage
 

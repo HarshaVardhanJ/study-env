@@ -30,6 +30,8 @@ Please note there may be a management network created on each machine by Vagrant
 
 Ansible is preinstalled on `server` and `server2`.
 
+The `student` user has passwordless sudo access and ssh key access to all servers.
+
 ## Usage
 
 Before launching the study environment, download the RHEL 7.0 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
