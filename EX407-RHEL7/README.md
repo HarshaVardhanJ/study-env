@@ -1,12 +1,14 @@
-# TEMPLATE-RHEL8
+# EX407-RHEL7
 
 ## Description
 
-This is a template file meant to make it easier to create new study environments. It should not be used by end users.
+This provides a minimal study environment for the EX407 exam based on RHEL7.
+
+Please see Environment Overview and Environment Details below for more information.
 
 ## Exam Objectives
 
-Exam objectives can be reviewed publicly on [the Red Hat website](https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam)
+Exam objectives can be reviewed publicly on [the Red Hat website](https://www.redhat.com/en/services/training/ex407-red-hat-certified-specialist-in-ansible-automation-exam)
 
 ## Hardware Requirements
 
@@ -26,7 +28,9 @@ Please note there may be a management network created on each machine by Vagrant
 
 ## Environment Details
 
-Details about the environment should go here. For example, exported NFS shares, ldap logins, etc...
+Ansible is preinstalled on `server` and `server2`.
+
+The `student` user has passwordless sudo access and ssh key access to all servers.
 
 ## Usage
 

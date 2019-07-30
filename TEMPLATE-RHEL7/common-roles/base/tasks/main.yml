@@ -115,8 +115,8 @@
 
   - name: Disable default route
     shell: |
-      nmcli connection modify "eth0" ipv4.never-default yes;
-      nmcli connection up "eth0";
+      nmcli connection modify "System eth0" ipv4.never-default yes;
+      nmcli connection up "System eth0";
     args:
       warn: no
     changed_when: false

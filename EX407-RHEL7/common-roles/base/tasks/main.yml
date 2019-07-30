@@ -18,7 +18,7 @@
       name: student
       comment: Student User
       password: $6$tv.QEDzY1zj0zomx$atjJtgIJDjw6r58Jx4H9K9Dq0q8witEurtKTyRZ2kPglm.TVR09AtyMvmh8Wm3mkJUznpU4ZQlS3tF.ekQTp3.
-      
+
   - name: Give student user passwordless sudo
     copy:
       content: "student        ALL=(ALL)       NOPASSWD: ALL"
@@ -89,17 +89,14 @@
       src: resolv.conf
       dest: /etc/resolv.conf
 
-  - name: Install dnf repository files
+  - name: Install yum repository file
     copy:
-      src: "{{item}}"
-      dest: /etc/yum.repos.d/{{item}}
-    loop:
-      - localdvd_baseos.repo
-      - localdvd_appstream.repo
-    notify: Clean dnf cache
+      src: localdvd.repo
+      dest: /etc/yum.repos.d/localdvd.repo
+    notify: Clean yum cache
 
   - name: Install required packages
-    dnf:
+    yum:
       name: "{{ item }}"
       state: latest
     loop: "{{ required_packages }}"
@@ -115,6 +112,10 @@
       name: chronyd
       enabled: yes
       state: started
+
+  - name: Update man database
+    command: mandb
+    changed_when: false
 
   - name: Setup MOTD
     template:

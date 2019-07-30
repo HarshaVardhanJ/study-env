@@ -28,13 +28,13 @@ Please note there may be a management network created on each machine by Vagrant
 
 ## Environment Details
 
-Ansible is preinstalled on all servers and can be used for practice. 
+Ansible is preinstalled on all servers and can be used for practice.
 
-`server1` & `server2` provide a secondary 5 GB pristine hard drive that may be used as desired.
+The `student` user has passwordless sudo access and ssh key access to all servers.
 
 ## Usage
 
-Before launching the study environment, download the RHEL 8 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
+Before launching the study environment, download the RHEL 8.0 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
 
 To launch the study environment, use: `vagrant up --provider=PROV` where `PROV` is either `libvirt` or `virtualbox`
 
