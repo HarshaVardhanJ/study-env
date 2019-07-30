@@ -17,8 +17,13 @@
     user:
       name: student
       comment: Student User
-      groups: wheel
       password: $6$tv.QEDzY1zj0zomx$atjJtgIJDjw6r58Jx4H9K9Dq0q8witEurtKTyRZ2kPglm.TVR09AtyMvmh8Wm3mkJUznpU4ZQlS3tF.ekQTp3.
+      
+  - name: Give student user passwordless sudo
+    copy:
+      content: "student        ALL=(ALL)       NOPASSWD: ALL"
+      dest: /etc/sudoers.d/student
+      validate: /usr/sbin/visudo -cf %s
 
   - name: Ensure .ssh directory exists
     file:
