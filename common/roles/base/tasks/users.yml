@@ -1,0 +1,32 @@
+---
+  - name: Setup student user
+    user:
+      name: student
+      comment: Student User
+      groups: wheel
+      password: $6$tv.QEDzY1zj0zomx$atjJtgIJDjw6r58Jx4H9K9Dq0q8witEurtKTyRZ2kPglm.TVR09AtyMvmh8Wm3mkJUznpU4ZQlS3tF.ekQTp3.
+
+  - name: Ensure .ssh directory exists
+    file:
+      path: /home/student/.ssh
+      owner: student
+      group: student
+      mode: 0700
+      state: directory
+
+  - name: Install private key
+    copy:
+      src: keys/id_rsa
+      dest: /home/student/.ssh/id_rsa
+      owner: student
+      group: student
+      mode: 0600
+
+  - name: Install public key
+    copy:
+      src: keys/id_rsa.pub
+      dest: /home/student/.ssh/authorized_keys
+      owner: student
+      group: student
+      mode: 0600
+      

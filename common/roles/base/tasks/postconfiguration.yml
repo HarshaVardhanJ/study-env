@@ -1,0 +1,14 @@
+---
+  - name: Setup MOTD
+    template:
+      src: motd.j2
+      dest: /etc/motd
+
+  - name: Disable default route
+    shell: |
+      nmcli connection modify "System eth0" ipv4.never-default yes;
+      nmcli connection up "System eth0";
+    args:
+      warn: no
+    changed_when: false
+    

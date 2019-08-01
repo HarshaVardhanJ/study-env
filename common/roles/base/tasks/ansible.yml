@@ -1,0 +1,12 @@
+---
+  - name: Install latest version of Ansible
+    pip:
+      name: ansible
+      state: latest
+    when: install_ansible_version is not defined
+
+  - name: Install Ansible {{ install_ansible_version }}
+    pip:
+      name: ansible
+      version: "{{ install_ansible_version }}"
+    when: install_ansible_version is defined

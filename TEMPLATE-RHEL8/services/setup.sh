@@ -1,7 +1,9 @@
 #!/bin/bash
 
+ISO=$1;
+
 # Mount ISO temporarily
-mount -o loop ~vagrant/sync/iso/rhel-8.0-x86_64-dvd.iso /mnt;
+mount -o loop ~vagrant/iso/${ISO} /mnt;
 
 # Create local repository
 rm -rf /var/www/html/*;
@@ -28,6 +30,17 @@ cat << EOF > /etc/hosts.example.com
 172.25.250.11 server1.example.com
 172.25.250.12 server2.example.com
 EOF
+
+# Setup dnsmasq overrides
+mkdir -p /etc/systemd/system/dnsmasq.service.d;
+cat << EOF > /etc/systemd/system/dnsmasq.service.d/override.conf
+[Unit]
+After=network-online.target
+Wants=network-online.target
+EOF
+
+# Reload systemd
+systemctl daemon-reload;
 
 # Start and enable httpd
 systemctl enable httpd;

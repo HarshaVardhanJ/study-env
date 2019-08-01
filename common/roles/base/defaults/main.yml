@@ -1,0 +1,16 @@
+---
+hostname: unnamed.example.com
+
+required_packages:
+  - vim
+  - chrony
+  - bash-completion
+  - libselinux-python
+  - "{{ selinux_documentation_package }}"
+
+firewall_services:
+  - ssh
+
+server_list:
+ - No servers are set
+ 

@@ -1,0 +1,25 @@
+---
+  - name: Set hostname
+    hostname:
+      name: "{{ hostname }}"
+      
+  - name: Configure NetworkManager to not manage resolv.conf
+    ini_file:
+      path: /etc/NetworkManager/NetworkManager.conf
+      section: main
+      option: dns
+      value: none
+    notify: Restart NetworkManager
+    register: networkmanagerchanged
+
+  - name: Restart NetworkManager
+    service:
+      name: NetworkManager
+      state: restarted
+    when: networkmanagerchanged.changed
+
+  - name: Install resolv.conf
+    copy:
+      src: resolv.conf
+      dest: /etc/resolv.conf
+      

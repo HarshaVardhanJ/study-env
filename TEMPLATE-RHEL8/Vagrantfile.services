@@ -1,0 +1,38 @@
+config.vm.define 'services' do |domain|
+    domain.vm.box = services_box;
+    domain.vm.box_version = services_box_version;
+    domain.vm.network :private_network, :ip => '172.25.250.10'
+    domain.vm.synced_folder '../common/iso',
+                            '/home/vagrant/iso',
+                            type: 'rsync',
+                            rsync__verbose: true,
+                            rsync__auto: false,
+                            rsync__exclude: '*.iso',
+                            rsync__args: [
+                                '--verbose',
+                                '--archive',
+                                '--delete',
+                                '-z',
+                                '--copy-links',
+                                '--include',
+                                iso_filename
+                            ]
+
+    domain.vm.provider 'libvirt' do |v|
+      v.memory = services_box_ram
+    end
+
+    domain.vm.provider 'virtualbox' do |v|
+      v.memory = services_box_ram
+    end
+    
+    # Run machine specific pre-configuration script
+    domain.vm.provision 'shell',
+                        path: 'services/setup.sh',
+                        args: iso_filename
+    
+    # Kick off Ansible
+    domain.vm.provision 'shell',
+                        path: '../common/ansible.sh',
+                        args: 'services'
+  end

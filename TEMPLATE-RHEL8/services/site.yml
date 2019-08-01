@@ -4,7 +4,6 @@
     server_list:
       - server1.example.com
       - server2.example.com
-    is_services: true
     hostname: services.example.com
     firewall_services:
       - ssh
