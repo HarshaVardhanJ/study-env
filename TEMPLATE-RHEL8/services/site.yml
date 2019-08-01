@@ -1,5 +1,6 @@
 ---
-- hosts: localhost
+- name: Setup services server
+  hosts: localhost
   vars:
     server_list:
       - server1.example.com

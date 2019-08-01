@@ -32,16 +32,16 @@ end
 # Services box RAM configuration
 services_box_ram = 1024
 
+# How many study boxes to provision
+study_box_num = 1
+
 # Study box RAM configuration
 study_box_ram = 1024
 
 # Study box additional hard drive configuration
-# Size in GB
+# Array of integer sizes (in GB)
 study_box_drives = [
-  {
-    'name': 'sdb',
-    'size': '5'
-  }
+  5
 ]
 
 # Add SATA controller
@@ -73,78 +73,9 @@ Vagrant.configure(vagrant_api_version) do |config|
                             '*.sh'
                           ]
 
-  # Set default disk bus for libvirt provider
-  config.vm.provider 'libvirt' do |v|
-    v.disk_bus = 'sata'
-  end
-
   # Services box configuration
   eval File.read('Vagrantfile.services')
 
-  # Server1 box configuration
-  config.vm.define "server1", primary: true do |domain|
-    domain.vm.box = study_box
-    domain.vm.box_version = study_box_version
-    domain.vm.network :private_network, :ip => '172.25.250.11'
-
-    domain.vm.provider "libvirt" do |v|
-      v.memory = 1024
-      
-      # Add a secondary drive (5 GB)
-      v.storage :file, :size => '5G', :bus => 'sata'
-    end
-
-    domain.vm.provider "virtualbox" do |v|
-      v.memory = 1024
-
-      # Create a secondary drive (5 GB) if it doesn't yet exist
-      unless File.exist?("./server1-sdb.vdi")
-        v.customize ['createhd', '--filename', "./server1-sdb.vdi", '--size', 5 * 1024]
-      end
-
-      # Attach the secondary drive to the server
-      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdb.vdi"]
-    end
-    
-    # Kick off Ansible
-    domain.vm.provision "shell",
-    inline: "PYTHONWARNINGS=ignore::UserWarning cd ~vagrant/sync && cp ../common/* . && ansible-playbook server1/site.yml"
-
-    # Output instructions to the learner
-    domain.vm.post_up_message = "To access server1, please ssh to '172.25.250.11' with username 'student' and password 'student'."
-  end
-
-  # Server2 box configuration
-  config.vm.define "server2" do |domain|
-    domain.vm.box = study_box
-    domain.vm.box_version = study_box_version
-    domain.vm.network :private_network, :ip => '172.25.250.12'
-
-    domain.vm.provider "libvirt" do |v|
-      v.memory = 1024
-      
-      # Add a secondary drive (5 GB)
-      v.storage :file, :size => '5G', :bus => 'sata'
-    end
-
-    domain.vm.provider "virtualbox" do |v|
-      v.memory = 1024
-
-      # Create a secondary drive (5 GB) if it doesn't yet exist
-      unless File.exist?("./server2-sdb.vdi")
-        v.customize ['createhd', '--filename', "./server2-sdb.vdi", '--size', 5 * 1024]
-      end
-
-      # Attach the secondary drive to the server
-      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server2-sdb.vdi"]
-    end
-    
-    # Kick off Ansible
-    domain.vm.provision "shell",
-    inline: "PYTHONWARNINGS=ignore::UserWarning cd ~vagrant/sync && cp ../common/* . && ansible-playbook server2/site.yml"
-
-    # Output instructions to the learner
-    domain.vm.post_up_message = "To access server2, please ssh to '172.25.250.12' with username 'student' and password 'student'."
-  end
-
+  # Study box configuration
+  eval File.read('Vagrantfile.study')
 end
