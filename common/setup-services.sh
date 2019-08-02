@@ -22,7 +22,7 @@ umount /mnt;
 # Generate list of servers
 for ((i = 1; i <= ${NUM}; i++)); do 
   echo server${i}.example.com >> /var/www/html/servers.txt;
-done;
+done
 
 # Bootstrap dnsmasq config
 cat << EOF > /etc/dnsmasq.d/localdns.conf
@@ -31,11 +31,12 @@ addn-hosts=/etc/hosts.example.com
 EOF
 
 # Install dnsmasq zone
-cat << EOF > /etc/hosts.example.com
-172.25.250.10 services.example.com
-172.25.250.11 server1.example.com
-172.25.250.12 server2.example.com
-EOF
+echo '172.25.250.10 services.example.com' > /etc/hosts.example.com;
+
+for ((i = 1; i <= ${NUM}; i++)); do
+  IP=$(($NUM+10))
+  echo "172.25.250.${IP} server${i}.example.com" >> /etc/hosts.example.com;
+done
 
 # Setup dnsmasq overrides
 mkdir -p /etc/systemd/system/dnsmasq.service.d;
