@@ -5,9 +5,13 @@
       return_content: true
     register: serverlistdata
 
+  - name: Remove trailing newline from server_list
+    set_fact:
+      cleanserverlistdata: "{{ serverlistdata.content | regex_replace('\n$', '') }}"
+
   - name: Convert server_list to list
     set_fact:
-      server_list: "{{ serverlistdata.content.split('\\n') }}"
+      server_list: "{{ cleanserverlistdata.split('\n') }}"
 
   - name: Determine hostname (services)
     set_fact:
