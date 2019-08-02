@@ -1,0 +1,7 @@
+---
+- name: Setup study server
+  hosts: localhost
+  vars:
+    ansible_install_version: 2.8.3
+  roles:
+    - common_base
