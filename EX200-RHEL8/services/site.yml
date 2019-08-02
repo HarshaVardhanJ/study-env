@@ -7,9 +7,6 @@
       - rpcbind
       - python3-policycoreutils
     firewall_services:
-      - http
-      - dns
-      - ntp
       - nfs
       - mountd
       - rpc-bind

@@ -1,11 +1,6 @@
 ---
 - name: Setup services server
   hosts: localhost
-  vars:
-    firewall_services:
-      - http
-      - dns
-      - ntp
   roles:
     - common_base
   tasks:
