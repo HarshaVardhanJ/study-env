@@ -55,3 +55,6 @@ systemctl start httpd;
 # Start and enable dnsmasq
 systemctl enable dnsmasq;
 systemctl start dnsmasq;
+
+# Set temporary hostname
+hostnamectl set-hostname services;
