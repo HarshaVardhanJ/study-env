@@ -1,149 +1,52 @@
-class VagrantPlugins::ProviderVirtualBox::Action::SetName
-  alias_method :original_call, :call
-  def call(env)
-    ui = env[:ui]
-    controller_name = "SATA"
-    driver = env[:machine].provider.driver
-    uuid = driver.instance_eval { @uuid }
-    vm_info = driver.execute("showvminfo", uuid)
-    has_controller = vm_info.match("Storage Controller Name.*#{controller_name}")
-    if !has_controller
-      ui.info "Creating storage controller '#{controller_name}'..."
-        driver.execute(
-          "storagectl", uuid,
-          "--name", "#{controller_name}",
-          "--add", "sata",
-          "--controller", "IntelAhci",
-          "--portcount", "1",
-          "--hostiocache", "off"
-        )
-    end
-    original_call(env)
-  end
-end
+require 'yaml'
 
-Vagrant.configure("2") do |config|
+# Study environment target OS
+# Set to 'rhel7' or 'rhel8'
+environment_os = 'rhel8'
+
+# Common variables
+common = YAML.load_file('../common/Vagrantfile-config.yml')
+
+# Study environment variables
+environment = YAML.load_file('environment.yml')
+
+# Vagrant API Version
+vagrant_api_version = common['vagrant_api_version']
+
+# Default services box configuration
+services_box = common[environment_os + '_services_box']
+services_box_version = common[environment_os + '_services_box_version']
+
+# Default study box configuration
+study_box = common[environment_os + '_study_box']
+study_box_version = common[environment_os + '_study_box_version']
+
+# ISO
+iso_filename = common[environment_os + '_iso_name']
+
+# Services box RAM configuration (in MB)
+services_box_ram = environment['services_box_ram']
+
+# How many study boxes to provision
+study_box_num = environment['study_box_num']
+
+# Study box RAM configuration (in MB)
+study_box_ram = environment['study_box_ram']
+
+# Study box additional hard drive configuration
+# Array of integer sizes (in GB)
+study_box_drives = environment['study_box_drives']
+
+# Add SATA controller
+eval File.read('../common/Vagrantfile.add_controller')
+
+Vagrant.configure(vagrant_api_version) do |config|
+  # Setup sync folders
+  eval File.read('../common/Vagrantfile.sync_folders')
 
   # Services box configuration
-  config.vm.define "services" do |domain|
-    domain.vm.box = "dean1012/rhel8-services"
-    domain.vm.box_version = "1.0"
-    domain.vm.synced_folder ".", "/home/vagrant/sync", type: "rsync", rsync__exclude: ".git/"
-    domain.vm.network :private_network, :ip => '172.25.250.10'
+  eval File.read('../common/Vagrantfile.services')
 
-    domain.vm.provider "libvirt" do |v|
-      v.disk_bus = 'sata'
-      v.memory = 1024
-    end
-
-    domain.vm.provider "virtualbox" do |v|
-      v.memory = 1024
-    end
-    
-    # Run machine specific pre-configuration script, if any
-    domain.vm.provision "shell", path: "services/setup.sh"
-    
-    # Kick off Ansible
-    domain.vm.provision "shell",
-    inline: "cd ~vagrant/sync/services && ansible-playbook site.yml"
-  end
-
-  # Server1 box configuration
-  config.vm.define "server1", primary: true do |domain|
-    domain.vm.box = "dean1012/rhel8-base"
-    domain.vm.box_version = "1.0"
-    domain.vm.synced_folder ".", "/home/vagrant/sync", type: "rsync", rsync__exclude: [".git/", "iso"]
-    domain.vm.network :private_network, :ip => '172.25.250.11'
-
-    domain.vm.provider "libvirt" do |v|
-      v.disk_bus = 'sata'
-      v.memory = 1024
-      
-      # Add secondary drives (5 GB each)
-      v.storage :file, :size => '5G', :bus => 'sata'
-      v.storage :file, :size => '5G', :bus => 'sata'
-      v.storage :file, :size => '5G', :bus => 'sata'
-    end
-
-    domain.vm.provider "virtualbox" do |v|
-      v.memory = 1024
-
-      # Create a sdb (5 GB) if it doesn't yet exist
-      unless File.exist?("./server1-sdb.vdi")
-        v.customize ['createhd', '--filename', "./server1-sdb.vdi", '--size', 5 * 1024]
-      end
-
-      # Create a sdc (5 GB) if it doesn't yet exist
-      unless File.exist?("./server1-sdc.vdi")
-        v.customize ['createhd', '--filename', "./server1-sdc.vdi", '--size', 5 * 1024]
-      end
-
-      # Create a sdd (5 GB) if it doesn't yet exist
-      unless File.exist?("./server1-sdd.vdi")
-        v.customize ['createhd', '--filename', "./server1-sdd.vdi", '--size', 5 * 1024]
-      end
-
-      # Attach the secondary drives to the server
-      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdb.vdi"]
-      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdc.vdi"]
-      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 3, '--device', 0, '--type', 'hdd', '--medium', "./server1-sdd.vdi"]
-    end
-    
-    # Kick off Ansible
-    domain.vm.provision "shell",
-    inline: "cd ~vagrant/sync/server1 && ansible-playbook site.yml"
-
-    # Output instructions to the learner
-    domain.vm.post_up_message = "To access server1, please ssh to '172.25.250.11' with username 'student' and password 'student'."
-  end
-
-  # Server2 box configuration
-  config.vm.define "server2" do |domain|
-    domain.vm.box = "dean1012/rhel8-base"
-    domain.vm.box_version = "1.0"
-    domain.vm.synced_folder ".", "/home/vagrant/sync", type: "rsync", rsync__exclude: [".git/", "iso"]
-    domain.vm.network :private_network, :ip => '172.25.250.12'
-
-    domain.vm.provider "libvirt" do |v|
-      v.disk_bus = 'sata'
-      v.memory = 1024
-      
-      # Add secondary drives (5 GB each)
-      v.storage :file, :size => '5G', :bus => 'sata'
-      v.storage :file, :size => '5G', :bus => 'sata'
-      v.storage :file, :size => '5G', :bus => 'sata'
-    end
-
-    domain.vm.provider "virtualbox" do |v|
-      v.memory = 1024
-
-      # Create a sdb (5 GB) if it doesn't yet exist
-      unless File.exist?("./server2-sdb.vdi")
-        v.customize ['createhd', '--filename', "./server2-sdb.vdi", '--size', 5 * 1024]
-      end
-
-      # Create a sdc (5 GB) if it doesn't yet exist
-      unless File.exist?("./server2-sdc.vdi")
-        v.customize ['createhd', '--filename', "./server2-sdc.vdi", '--size', 5 * 1024]
-      end
-
-      # Create a sdd (5 GB) if it doesn't yet exist
-      unless File.exist?("./server2-sdd.vdi")
-        v.customize ['createhd', '--filename', "./server2-sdd.vdi", '--size', 5 * 1024]
-      end
-
-      # Attach the secondary drives to the server
-      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "./server2-sdb.vdi"]
-      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', "./server2-sdc.vdi"]
-      v.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 3, '--device', 0, '--type', 'hdd', '--medium', "./server2-sdd.vdi"]
-    end
-    
-    # Kick off Ansible
-    domain.vm.provision "shell",
-    inline: "cd ~vagrant/sync/server2 && ansible-playbook site.yml"
-
-    # Output instructions to the learner
-    domain.vm.post_up_message = "To access server2, please ssh to '172.25.250.12' with username 'student' and password 'student'."
-  end
-
+  # Study box configuration
+  eval File.read('../common/Vagrantfile.study')
 end

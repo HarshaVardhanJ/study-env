@@ -1,0 +1,7 @@
+---
+  - name: Enable passwordless sudo for student user
+    copy:
+      content: 'student        ALL=(ALL)       NOPASSWD: ALL'
+      dest: /etc/sudoers.d/student
+      validate: /usr/sbin/visudo -cf %s
+      

@@ -1,0 +1,3 @@
+{% for export in nfs_export_list %}
+/shares/{{ export.name }} 172.25.250.0/24({{ export.permissions }},no_root_squash)
+{% endfor %}

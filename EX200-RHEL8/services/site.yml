@@ -1,96 +1,30 @@
 ---
-- hosts: localhost
+- name: Setup services server
+  hosts: localhost
   vars:
-    server_list:
-      - server1.example.com
-      - server2.example.com
-    is_services: true
-    hostname: services.example.com
+    install_packages:
+      - nfs-utils
+      - rpcbind
+      - python3-policycoreutils
     firewall_services:
-      - ssh
       - http
       - dns
       - ntp
       - nfs
       - mountd
       - rpc-bind
+    nfs_export_list:
+      - name: share1
+        permissions: ro
+      - name: share2
+        permissions: rw
   roles:
-    - base
+    - common_base
+    - ex200
   tasks:
-  - name: Ensure Apache is started and enabled
-    service:
-      name: httpd
-      enabled: yes
-      state: started
-
-  - name: Ensure dnsmasq is started and enabled
-    service:
-      name: dnsmasq
-      enabled: yes
-      state: started
-
-  - name: Install NFS Server
-    dnf:
-      name: "{{ item }}"
-      state: latest
-    loop:
-      - nfs-utils
-      - rpcbind
-      - python3-policycoreutils
-
-  - name: Create NFS exports
-    file:
-      path: "{{ item }}"
-      state: directory
-    loop:
-      - /shares/share1
-      - /shares/share2
-
-  - name: Fix ownership and permissions on NFS exports
-    file:
-      path: "/shares"
-      state: directory
-      recurse: yes
-      owner: root
-      group: root
-      mode: u=rwX,g=rX,o=rX
-
-  - name: Setup SELinux context for NFS exports
-    sefcontext:
-      target: '/shares(/.*)?'
-      setype: public_content_rw_t
-      state: present
-    register: selinuxchanged
-
-  - name: Apply new SELinux context to NFS exports
-    command: restorecon -Rv /shares
-    when: selinuxchanged.changed
-
-  - name: Export NFS shares
-    copy:
-      content: |
-        /shares/share1 172.25.250.0/24(ro,no_root_squash)
-        /shares/share2 172.25.250.0/24(rw,no_root_squash)
-      dest: /etc/exports
-    register: exportschanged
-
-  - name: Ensure NFS server is started and enabled
-    service:
-      name: "{{ item }}"
-      state: started
-      enabled: yes
-    loop:
-      - rpcbind
-      - nfs-server
-
-  - name: Activate NFS exports
-    command: exportfs -r
-    when: exportschanged.changed
-
-  # this task should always run last
-  - name: Mark provisioning as complete
-    copy:
-      content: complete
-      dest: /var/www/html/complete.txt
-      mode: 0644
-      setype: httpd_sys_content_t
+    - name: Mark provisioning as complete
+      copy:
+        content: complete
+        dest: /var/www/html/complete.txt
+        mode: 0644
+        setype: httpd_sys_content_t

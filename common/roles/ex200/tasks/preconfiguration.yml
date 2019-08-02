@@ -1,0 +1,6 @@
+---
+  - name: Create NFS exports
+    file:
+      path: /shares/{{ item.name }}
+      state: directory
+    loop: "{{ nfs_export_list }}"

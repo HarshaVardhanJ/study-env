@@ -1,0 +1,19 @@
+---
+  - name: Generate exports file
+    template:
+      src: exports.j2
+      dest: /etc/exports
+    register: exportschanged
+
+  - name: Ensure NFS server is started and enabled
+    service:
+      name: "{{ item }}"
+      state: started
+      enabled: yes
+    loop:
+      - rpcbind
+      - nfs-server
+
+  - name: Activate NFS exports
+    command: exportfs -r
+    when: exportschanged.changed

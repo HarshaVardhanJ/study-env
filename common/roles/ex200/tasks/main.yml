@@ -1,0 +1,5 @@
+---
+  - import_tasks: preconfiguration.yml
+  - import_tasks: security.yml
+  - import_tasks: postconfiguration.yml
+  
