@@ -24,6 +24,8 @@ If you absolutely must, create a `roles` directory in the environment folder (fo
 
 You should avoid editing the Vagrantfiles where possible.
 
+You should modify the title, description, exam objectives, and environment details sections of the environment `README.md` file.
+
 ## Design Notes
 
 With the exception of the base OS, you should always aim to use upstream software versions that are equivilant to the Red Hat software version being tested on. For example, `Kubernetes` instead of `OpenShift`.
