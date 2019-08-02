@@ -45,8 +45,8 @@ Vagrant.configure(vagrant_api_version) do |config|
   eval File.read('../common/Vagrantfile.sync_folders')
 
   # Services box configuration
-  eval File.read('Vagrantfile.services')
+  eval File.read('../common/Vagrantfile.services')
 
   # Study box configuration
-  eval File.read('Vagrantfile.study')
+  eval File.read('../common/Vagrantfile.study')
 end
