@@ -39,4 +39,9 @@ config.vm.define 'services' do |domain|
     domain.vm.provision 'shell',
                         path: '../common/ansible.sh',
                         args: 'services'
+
+    # Retry Ansible, if needed
+    domain.vm.provision 'shell',
+                        path: '../common/retry-ansible.sh',
+                        args: 'services'
   end

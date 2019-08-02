@@ -1,5 +1,14 @@
 ---
-  - import_tasks: preconfiguration.yml
-  - import_tasks: security.yml
-  - import_tasks: postconfiguration.yml
+  # Common tasks (RHEL 7 and RHEL 8)
+  - name: Common tasks (RHEL 7 and RHEL 8)
+    block:
+      - import_tasks: nfs.yml
+    when: (ansible_facts.distribution_major_version == '7') or
+          (ansible_facts.distribution_major_version == '8')
+
+  # RHEL 7 tasks
+  - name: RHEL 7 tasks
+    block:
+      - meta: noop
+    when: ansible_facts.distribution_major_version == '7'
   

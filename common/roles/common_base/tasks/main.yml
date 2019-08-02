@@ -3,9 +3,9 @@
   - import_tasks: preconfiguration.yml
   - import_tasks: facts.yml
   - import_tasks: users.yml
+  - import_tasks: ansible.yml
   - import_tasks: networking.yml
   - import_tasks: packages.yml
   - import_tasks: timesync.yml
   - import_tasks: security.yml
-  - import_tasks: ansible.yml
   - import_tasks: postconfiguration.yml

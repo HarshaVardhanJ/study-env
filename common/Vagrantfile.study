@@ -61,6 +61,11 @@
       domain.vm.provision 'shell',
                           path: '../common/ansible.sh',
                           args: 'study'
+
+      # Retry Ansible, if needed
+      domain.vm.provision 'shell',
+                          path: '../common/retry-ansible.sh',
+                          args: 'study'
   
       # Output instructions to the learner
       domain.vm.post_up_message = "To access server#{i}, please ssh to '#{ip_address}' with username 'student' and password 'student'."

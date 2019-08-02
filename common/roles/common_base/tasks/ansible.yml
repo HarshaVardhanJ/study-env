@@ -6,8 +6,26 @@
     when: (install_ansible_version is not defined) or
           (install_ansible_version == 'latest')
 
-  - name: Install Ansible {{ install_ansible_version }}
-    pip:
-      name: ansible
-      version: "{{ install_ansible_version }}"
+  - name: Install specific version of Ansible
+    block:
+      - name: Install Ansible {{ install_ansible_version }}
+        pip:
+          name: ansible
+          version: "{{ install_ansible_version }}"
+        register: ansiblechanged
+
+      - name: Retry playbook if needed
+        block:
+          - name: Setup retry file
+            file:
+              path: /tmp/retry
+              state: touch
+            become: false
+
+          - debug:
+              msg: Ansible version was changed... the playbook will execute again. Please wait...
+            become: false
+
+          - meta: end_play
+        when: ansiblechanged.changed
     when: install_ansible_version is defined
