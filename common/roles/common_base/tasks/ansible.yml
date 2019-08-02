@@ -3,7 +3,8 @@
     pip:
       name: ansible
       state: latest
-    when: install_ansible_version is not defined
+    when: (install_ansible_version is not defined) or
+          (install_ansible_version == 'latest')
 
   - name: Install Ansible {{ install_ansible_version }}
     pip:

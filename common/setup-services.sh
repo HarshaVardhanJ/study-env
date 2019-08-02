@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ISO=$1;
+NUM=$2;
 
 # Mount ISO temporarily
 mount -o loop ~vagrant/iso/${ISO} /mnt;
@@ -17,6 +18,11 @@ restorecon -Rv /var/www/html;
 
 # Cleanup
 umount /mnt;
+
+# Generate list of servers
+for ((i = 1; i <= ${NUM}; i++)); do 
+  echo server${i}.example.com >> /var/www/html/servers.txt;
+done;
 
 # Bootstrap dnsmasq config
 cat << EOF > /etc/dnsmasq.d/localdns.conf

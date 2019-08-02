@@ -1,7 +1,8 @@
 config.vm.define 'services' do |domain|
     domain.vm.box = services_box;
     domain.vm.box_version = services_box_version;
-    domain.vm.network :private_network, :ip => '172.25.250.10'
+    domain.vm.network :private_network,
+                      :ip => '172.25.250.10'
     domain.vm.synced_folder '../common/iso',
                             '/home/vagrant/iso',
                             type: 'rsync',
@@ -28,8 +29,11 @@ config.vm.define 'services' do |domain|
     
     # Run machine specific pre-configuration script
     domain.vm.provision 'shell',
-                        path: 'services/setup.sh',
-                        args: iso_filename
+                        path: '../common/setup-services.sh',
+                        args: [
+                          iso_filename,
+                          study_box_num
+                        ]
     
     # Kick off Ansible
     domain.vm.provision 'shell',

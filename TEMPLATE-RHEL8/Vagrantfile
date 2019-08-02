@@ -1,77 +1,48 @@
-# Vagrant API version
-vagrant_api_version='2'
+require 'yaml'
 
 # Study environment target OS
-environment_os='RHEL8'
+# Set to 'rhel7' or 'rhel8'
+environment_os = 'rhel8'
 
-# Autodetect box configuration and ISO based on environment target OS
-if environment_os == 'RHEL7'
-  # Default services box configuration
-  services_box='dean1012/rhel7-services'
-  services_box_version='1.0'
+# Common variables
+common = YAML.load_file('../common/Vagrantfile-config.yml')
 
-  # Default study box configuration
-  study_box = "dean1012/rhel7-base"
-  study_box_version='1.0'
+# Study environment variables
+environment = YAML.load_file('environment.yml')
 
-  # ISO
-  iso_filename='rhel-server-7.0-x86_64-dvd.iso'
-elsif environment_os == 'RHEL8'
-  # Default services box configuration
-  services_box='dean1012/rhel8-services'
-  services_box_version='1.0'
+# Vagrant API Version
+vagrant_api_version = common['vagrant_api_version']
 
-  # Default study box configuration
-  study_box = "dean1012/rhel8-base"
-  study_box_version='1.0'
+# Default services box configuration
+services_box = common[environment_os + '_services_box']
+services_box_version = common[environment_os + '_services_box_version']
 
-  # ISO
-  iso_filename='rhel-8.0-x86_64-dvd.iso'
-end
+# Default study box configuration
+study_box = common[environment_os + '_study_box']
+study_box_version = common[environment_os + '_study_box_version']
 
-# Services box RAM configuration
-services_box_ram = 1024
+# ISO
+iso_filename = common[environment_os + '_iso_name']
+
+# Services box RAM configuration (in MB)
+services_box_ram = environment['services_box_ram']
 
 # How many study boxes to provision
-study_box_num = 1
+study_box_num = environment['study_box_num']
 
-# Study box RAM configuration
-study_box_ram = 1024
+# Study box RAM configuration (in MB)
+study_box_ram = environment['study_box_ram']
 
 # Study box additional hard drive configuration
 # Array of integer sizes (in GB)
-study_box_drives = [
-  5
-]
+study_box_drives = environment['study_box_drives']
 
 # Add SATA controller
 eval File.read('../common/Vagrantfile.add_controller')
 
 Vagrant.configure(vagrant_api_version) do |config|
-  # Disable default sync folder
-  config.vm.synced_folder '.',
-                          '/vagrant',
-                          disabled: true
-
-  # Setup common sync folders
-  config.vm.synced_folder '.',
-                          '/home/vagrant/sync',
-                          type: 'rsync',
-                          rsync__verbose: true,
-                          rsync__auto: false,
-                          rsync__exclude: [
-                            'Vagrantfile*'
-                          ]
-  config.vm.synced_folder '../common',
-                          '/home/vagrant/common',
-                          type: 'rsync',
-                          rsync__verbose: true,
-                          rsync__auto: false,
-                          rsync__exclude: [
-                            'iso', 
-                            'Vagrantfile*',
-                            '*.sh'
-                          ]
+  # Setup sync folders
+  eval File.read('../common/Vagrantfile.sync_folders')
 
   # Services box configuration
   eval File.read('Vagrantfile.services')

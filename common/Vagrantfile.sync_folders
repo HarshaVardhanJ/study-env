@@ -1,0 +1,26 @@
+# Disable default sync folder
+config.vm.synced_folder '.',
+                        '/vagrant',
+                        disabled: true
+
+# Setup sync folders
+config.vm.synced_folder '.',
+                        '/home/vagrant/sync',
+                        type: 'rsync',
+                        rsync__verbose: true,
+                        rsync__auto: false,
+                        rsync__exclude: [
+                        'Vagrantfile*',
+                        'environment.yml'
+                        ]
+config.vm.synced_folder '../common',
+                        '/home/vagrant/common',
+                        type: 'rsync',
+                        rsync__verbose: true,
+                        rsync__auto: false,
+                        rsync__exclude: [
+                        'iso', 
+                        'Vagrantfile*',
+                        '*.sh'
+                        ]
+                        

@@ -18,9 +18,11 @@
     notify: Clean package manager cache
     when: ansible_facts.distribution_major_version == '8'
 
-  - name: Install required packages
+  - name: Install packages
     package:
       name: "{{ item }}"
       state: latest
-    loop: "{{ required_packages }}"
+    loop:
+      - "{{ required_packages }}"
+      - "{{ install_packages | default([]) }}"
     

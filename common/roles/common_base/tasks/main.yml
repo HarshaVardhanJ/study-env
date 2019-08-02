@@ -1,6 +1,7 @@
 ---
   - include_vars: "RHEL-{{ ansible_distribution_major_version }}.yml"
   - import_tasks: preconfiguration.yml
+  - import_tasks: facts.yml
   - import_tasks: users.yml
   - import_tasks: networking.yml
   - import_tasks: packages.yml

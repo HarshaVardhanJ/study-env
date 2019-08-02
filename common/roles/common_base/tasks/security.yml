@@ -17,4 +17,4 @@
       permanent: yes
       immediate: yes
       state: enabled
-    loop: "{{ firewall_services }}"
+    loop: "{{ required_firewall_services + (firewall_services | default([])) }}"
