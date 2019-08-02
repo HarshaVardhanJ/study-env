@@ -1,0 +1,17 @@
+---
+# Services box RAM configuration (in MB)
+services_box_ram: 1024
+
+# How many study boxes to provision
+study_box_num: 3
+
+# Study box RAM configuration (in MB)
+study_box_ram: 1024
+
+# Study box additional hard drive configuration
+# Array of integer sizes (in GB)
+study_box_drives:
+  - 5
+  - 5
+  - 5
+  

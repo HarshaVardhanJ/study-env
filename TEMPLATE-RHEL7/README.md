@@ -1,4 +1,4 @@
-# TEMPLATE-RHEL8
+# TEMPLATE-RHEL7
 
 ## Description
 
