@@ -1,5 +1,0 @@
-[AppStream]
-name = AppStream
-gpgcheck = 0
-enabled = 1
-baseurl = http://services.example.com/AppStream

@@ -1,0 +1,28 @@
+---
+  - name: Install yum repository files
+    copy:
+      src: rhel7-localdvd.repo
+      dest: /etc/yum.repos.d/localdvd.repo
+    notify: Clean package manager cache
+    when: ansible_facts.distribution_major_version == '7'
+
+  - name: Install DNF repository files
+    copy:
+      src: "{{ item.src }}"
+      dest: /etc/yum.repos.d/{{ item.dest }}
+    loop:
+      - src: rhel8-localdvd_baseos.repo
+        dest: localdvd_baseos.repo
+      - src: rhel8-localdvd_appstream.repo
+        dest: localdvd_appstream.repo
+    notify: Clean package manager cache
+    when: ansible_facts.distribution_major_version == '8'
+
+  - name: Install packages
+    package:
+      name: "{{ item }}"
+      state: latest
+    loop:
+      - "{{ required_packages }}"
+      - "{{ install_packages | default([]) }}"
+    

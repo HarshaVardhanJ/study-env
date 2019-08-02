@@ -1,0 +1,21 @@
+---
+# Vagrant API version
+vagrant_api_version: '2'
+
+# RHEL 7 box names and versions
+rhel7_services_box: 'dean1012/rhel7-services'
+rhel7_services_box_version: '1.0'
+rhel7_study_box: 'dean1012/rhel7-base'
+rhel7_study_box_version: '1.0'
+
+# RHEL 7 ISO
+rhel7_iso_name: 'rhel-server-7.0-x86_64-dvd.iso'
+
+# RHEL 8 box names and versions
+rhel8_services_box: 'dean1012/rhel8-services'
+rhel8_services_box_version: '1.0'
+rhel8_study_box: 'dean1012/rhel8-base'
+rhel8_study_box_version: '1.0'
+
+# RHEL 8 ISO
+rhel8_iso_name: 'rhel-8.0-x86_64-dvd.iso'

@@ -1,0 +1,73 @@
+(1..study_box_num).each do |i|
+  config.vm.define "server#{i}" do |domain|
+    ip_address = '172.25.250.' + (10 + i).to_s
+    domain.vm.box = study_box
+    domain.vm.box_version = study_box_version
+    domain.vm.network :private_network,
+                      :ip => ip_address
+
+    domain.vm.provider 'libvirt' do |v|
+        v.memory = study_box_ram
+        
+        # Attach additional hard drives if any are configured
+        if defined?(study_box_drives)
+          for drive in study_box_drives do
+            v.storage :file,
+                      :size => drive.to_s + 'G',
+                      :bus => 'sata'
+          end
+        end
+      end
+  
+      domain.vm.provider 'virtualbox' do |v|
+        v.memory = study_box_ram
+
+        # Attach additional hard drives if any are configured
+        if defined?(study_box_drives)
+          drivenum = 0
+          for drive in study_box_drives do
+            disk_filename = "./server#{i}-disk" + drivenum.to_s + '.vdi'
+
+            unless File.exist?(disk_filename)
+              v.customize [
+                  'createhd', 
+                  '--filename', 
+                  disk_filename, 
+                  '--size', 
+                  drive.to_i * 1024
+                ]
+            end
+
+            v.customize [
+                'storageattach', 
+                :id, '--storagectl', 
+                'SATA', 
+                '--port', 
+                drivenum, 
+                '--device', 
+                0, 
+                '--type', 
+                'hdd', 
+                '--medium', 
+                disk_filename
+            ]
+
+            drivenum = drivenum + 1;
+          end
+        end
+      end
+      
+      # Kick off Ansible
+      domain.vm.provision 'shell',
+                          path: '../common/ansible.sh',
+                          args: 'study'
+
+      # Retry Ansible, if needed
+      domain.vm.provision 'shell',
+                          path: '../common/retry-ansible.sh',
+                          args: 'study'
+  
+      # Output instructions to the learner
+      domain.vm.post_up_message = "To access server#{i}, please ssh to '#{ip_address}' with username 'student' and password 'student'."
+  end
+end

@@ -1,0 +1,23 @@
+class VagrantPlugins::ProviderVirtualBox::Action::SetName
+  alias_method :original_call, :call
+  def call(env)
+    ui = env[:ui]
+    controller_name = "SATA"
+    driver = env[:machine].provider.driver
+    uuid = driver.instance_eval { @uuid }
+    vm_info = driver.execute("showvminfo", uuid)
+    has_controller = vm_info.match("Storage Controller Name.*#{controller_name}")
+    if !has_controller
+      ui.info "Creating storage controller '#{controller_name}'..."
+        driver.execute(
+          "storagectl", uuid,
+          "--name", "#{controller_name}",
+          "--add", "sata",
+          "--controller", "IntelAhci",
+          "--portcount", "1",
+          "--hostiocache", "off"
+        )
+    end
+    original_call(env)
+  end
+end

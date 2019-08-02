@@ -1,0 +1,8 @@
+---
+- name: Setup study server
+  hosts: localhost
+  vars:
+    install_ansible_version: 2.8.3
+  roles:
+    - common_base
+    - passwordless_sudo

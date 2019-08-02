@@ -1,0 +1,10 @@
+---
+  - name: Wait for services machine to finish setting up
+    block:
+      - debug:
+          msg: Setup will continue after the services machine is fully set up... please wait...
+
+      - shell: RC=1; while [ $RC -ne 0 ]; do curl http://172.25.250.10/complete.txt >/dev/null 2>/dev/null; RC=$?; done;
+        changed_when: false
+    when: ansible_facts.hostname != 'services'
+    

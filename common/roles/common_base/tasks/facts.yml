@@ -1,0 +1,34 @@
+---
+  - name: Retrieve list of servers
+    uri:
+      url: http://172.25.250.10/servers.txt
+      return_content: true
+    register: serverlistdata
+
+  - name: Remove trailing newline from server_list
+    set_fact:
+      cleanserverlistdata: "{{ serverlistdata.content | regex_replace('\n$', '') }}"
+
+  - name: Convert server_list to list
+    set_fact:
+      server_list: "{{ cleanserverlistdata.split('\n') }}"
+
+  - name: Determine hostname (services)
+    set_fact:
+      hostname: services.example.com
+    when: ansible_facts.hostname == 'services'
+
+  - name: Determine hostname (study)
+    block:
+      - name: Determine last octet of IP address
+        set_fact:
+          last_octet: "{{ ansible_facts.eth1.ipv4.address | regex_replace('^172.25.250.', '') }}"
+
+      - name: Determine server ID
+        set_fact:
+          server_id: "{{ last_octet | int - 10 }}"
+
+      - name: Generate hostname
+        set_fact:
+          hostname: server{{ server_id }}.example.com
+    when: ansible_facts.hostname != 'services'

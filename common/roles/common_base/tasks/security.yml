@@ -1,0 +1,20 @@
+---
+  - name: Ensure SELinux is enforcing
+    selinux:
+      policy: targeted
+      state: enforcing
+
+  - name: Ensure FirewallD is started and enabled
+    service:
+      name: firewalld
+      enabled: yes
+      state: started
+
+  - name: Ensure FirewallD allows needed incoming services
+    firewalld:
+      zone: public
+      service: "{{ item }}"
+      permanent: yes
+      immediate: yes
+      state: enabled
+    loop: "{{ required_firewall_services + (firewall_services | default([])) }}"

@@ -1,0 +1,13 @@
+---
+  - name: Install chrony configuration
+    copy:
+      src: chrony.conf
+      dest: /etc/chrony.conf
+    notify: Restart Chronyd
+
+  - name: Start and enable Chronyd
+    service:
+      name: chronyd
+      enabled: yes
+      state: started
+      

@@ -21,20 +21,22 @@ Exam objectives can be reviewed publicly on [the Red Hat website](https://www.re
 
 Several machines are provided to assist you in studying:
 
-* `services` - This machine provides services you may need to study but should not need to setup on your own. Typically, you should not have to connect to this machine.
-* `server1` & `server2` - These machines are base installs you can use to study with.
+* `services` - This machine provides services you may need to study but should not need to setup on your own. Typically, you should not have to connect to this machine
+* One or more servers you can use to study. A full listing will be provided in the MOTD on each server
 
 Please note there may be a management network created on each machine by Vagrant. You may use DNS or the `172.25.250.0/24` network to interact with the study environment.
 
 ## Environment Details
 
-Ansible is preinstalled on `server` and `server2`.
+Ansible 2.7.12 is preinstalled on all servers and can be used for practice.
+
+Each study machine has multiple additional hard drives configured. Use `lsblk` to see the full list of additional hard drives.
 
 The `student` user has passwordless sudo access and ssh key access to all servers.
 
 ## Usage
 
-Before launching the study environment, download the RHEL 7.0 Binary DVD ISO per the instructions in [iso/README.md](iso/README.md).
+Before launching the study environment, download the RHEL 7.0 Binary DVD ISO per the instructions in [../common/iso/README.md](../common/iso/README.md).
 
 To launch the study environment, use: `vagrant up --provider=PROV` where `PROV` is either `libvirt` or `virtualbox`
 

@@ -1,0 +1,8 @@
+---
+# NFS export list
+# Each list entry is a dictionary consisting of the share name (to be exported under /shares) and permissions
+# Permissions can be 'ro' or 'rw'
+nfs_export_list:
+  - name: shareexample
+    permissions: ro
+    

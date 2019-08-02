@@ -1,0 +1,10 @@
+---
+- name: Setup study server
+  hosts: localhost
+  vars:
+    install_packages:
+      - nfs-utils
+      - rpcbind
+      - python3-policycoreutils
+  roles:
+    - common_base

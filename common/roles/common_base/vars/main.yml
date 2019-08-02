@@ -1,0 +1,11 @@
+---
+required_packages:
+  - vim
+  - chrony
+  - bash-completion
+  - libselinux-python
+  - "{{ selinux_documentation_package }}"
+
+required_firewall_services:
+  - ssh
+  
